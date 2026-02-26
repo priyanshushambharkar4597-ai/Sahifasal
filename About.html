@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us | Sahifasal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+       
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+       
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 0;
+        }
+
+        
+        header {
+            background-color: #4CAF50;
+            color: #fff;
+            padding: 40px 0;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.2rem;
+        }
+
+        
+        .about-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 40px;
+            padding: 60px 0;
+            align-items: center;
+        }
+
+        .about-text {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .about-text h2 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            color: #4CAF50;
+        }
+
+        .about-text p {
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .about-image {
+            flex: 1;
+            min-width: 300px;
+            text-align: center;
+        }
+
+        .about-image img {
+            width: 100%;
+            max-width: 400px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .about-image img:hover {
+            transform: scale(1.05);
+        }
+
+        
+        .btn {
+            display: inline-block;
+            padding: 12px 30px;
+            background-color: #4CAF50;
+            color: #fff;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+       
+        footer {
+            background-color: #333;
+            color: #fff;
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+        }
+
+        
+        @media (max-width: 768px) {
+            .about-section {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+   
+    <header>
+        <h1>Welcome to Sahifasal</h1>
+        <p>Your Smart Agriculture Companion</p>
+    </header>
+
+    
+    <div class="container">
+        <section class="about-section">
+            <div class="about-text">
+                <h2>About Us</h2>
+                <p>At <strong>Sahifasal</strong>, we empower farmers with innovative tools and insights to improve crop yield, manage resources efficiently, and make informed decisions. We combine technology and agriculture to make farming smarter, easier, and more profitable.</p>
+                <p>Our services include real-time crop insights, weather & soil monitoring, market updates, and a vibrant community of farmers sharing knowledge and experiences.</p>
+                <a href="#contact" class="btn">Contact Us</a>
+            </div>
+            <div class="about-image">
+                <img src="https://images.unsplash.com/photo-1581091870623-2036e824286f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8ZmFybWluZyUyMGZhcm1lcnxlbnwwfHwwfHw%3D&ixlib=rb-4.0.3&q=80&w=400" alt="Farming Image">
+            </div>
+        </section>
+    </div>
+
+    
+    <footer>
+        <p>&copy; 2026 Sahifasal. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+       
+        document.querySelector('.btn').addEventListener('click', function(e) {
+            e.preventDefault();
+            document.querySelector('#contact')?.scrollIntoView({ behavior: 'smooth' });
+        });
+    </script>
+
+</body>
+</html>

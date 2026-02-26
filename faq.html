@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FAQ | Sahifasal – smart farming</title>
+  <style>
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --sage-light: #e9f5e9;
+      --sage-soft: #ccf0d3;
+      --earth: #5b6e4a;
+      --earth-deep: #2c4538;
+      --terracotta: #c97c5d;
+      --terracotta-soft: #e6b8a2;
+      --cream: #fff9ef;
+      --glass-bg: rgba(255, 249, 239, 0.7);
+      --shadow-sm: 0 12px 28px -8px rgba(44, 69, 56, 0.12);
+      --shadow-hover: 0 24px 42px -12px rgba(44, 69, 56, 0.25);
+      --border-glass: 1px solid rgba(201, 124, 93, 0.15);
+      --font-sans: 'Quicksand', 'Segoe UI', system-ui, -apple-system, sans-serif;
+      --transition-bounce: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+    }
+
+    body {
+      background: linear-gradient(145deg, #f3fbf0 0%, #fef7ed 100%);
+      font-family: var(--font-sans);
+      color: #1e2f23;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    
+    header {
+      background: rgba(255, 250, 240, 0.85);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      padding: 1rem 8%;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 6px 18px rgba(88, 112, 76, 0.08);
+      border-bottom: 2px solid var(--terracotta-soft);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      gap: 0.8rem 1.5rem;
+    }
+
+    .logo {
+      font-size: clamp(1.4rem, 5vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      background: linear-gradient(135deg, #3b5e44 0%, #7b5e4a 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    
+    .logo::before {
+      content: none;
+    }
+
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.8rem 1.2rem;
+    }
+
+    nav a {
+      color: #2c4a3a;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: clamp(0.9rem, 3vw, 1.1rem);
+      padding: 0.4rem 0.8rem;
+      border-radius: 40px;
+      background: transparent;
+      transition: var(--transition-bounce);
+      border: 1.5px solid transparent;
+    }
+
+    nav a:hover {
+      background: var(--terracotta-soft);
+      border-color: var(--terracotta);
+      color: #2b3e2b;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(154, 210, 90, 0.25);
+    }
+
+    
+    .container {
+      padding: 3rem clamp(1rem, 6%, 4rem);
+      max-width: 68rem;
+      margin: 0 auto;
+      width: 100%;
+      flex: 1;
+    }
+
+    h1 {
+      color: #2a5e45;
+      font-size: clamp(2rem, 8vw, 3.2rem);
+      margin-bottom: 2.5rem;
+      font-weight: 650;
+      letter-spacing: -0.02em;
+      position: relative;
+      display: inline-block;
+    }
+
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 0;
+      width: 80px;
+      height: 5px;
+      background: linear-gradient(90deg, var(--terracotta), #b3cfaa);
+      border-radius: 8px;
+    }
+
+    
+    .faq {
+      background: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: var(--border-glass);
+      border-radius: 32px 16px 32px 16px;
+      padding: 1.5rem 2rem;
+      margin-bottom: 1.5rem;
+      cursor: pointer;
+      transition: var(--transition-bounce);
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      border-left: 6px solid var(--terracotta);
+    }
+
+    .faq:hover {
+      transform: translateY(-6px) scale(1.01);
+      box-shadow: var(--shadow-hover);
+      background: rgba(255, 249, 239, 0.85);
+      border-left-width: 8px;
+    }
+
+    .faq h3 {
+      margin: 0;
+      color: #1d412f;
+      font-size: clamp(1.2rem, 5vw, 1.6rem);
+      font-weight: 650;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding-right: 2.5rem;   
+      position: relative;
+    }
+
+    
+    .faq h3::after {
+      content: "+";             
+      font-size: 2rem;
+      font-weight: 300;
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      opacity: 0.8;
+      transition: transform 0.2s ease, content 0.2s, opacity 0.2s;
+      line-height: 1;
+      color: var(--terracotta);
+    }
+
+    .faq.active h3::after {
+      content: "–";             
+      transform: translateY(-50%) scale(1.1);
+      opacity: 1;
+    }
+
+    
+    .answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.5s ease-in-out, margin 0.3s, padding 0.3s;
+      color: #2b4b34;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      border-radius: 0 12px 12px 0;
+      background: rgba(255, 255, 240, 0.4);
+      padding-left: 0.5rem;
+      padding-right: 0.5rem;
+    }
+
+    .faq.active .answer {
+      max-height: 350px;        
+      margin-top: 1.2rem;
+      padding: 0.8rem 0.8rem 0.4rem 0.8rem;
+      border-left: 3px dashed var(--terracotta);
+    }
+
+   
+    @media (max-width: 640px) {
+      header {
+        padding: 0.8rem 5%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.3rem;
+      }
+
+      .logo {
+        justify-content: center;
+      }
+
+      nav {
+        justify-content: center;
+      }
+
+      nav a {
+        padding: 0.3rem 0.9rem;
+        background: rgba(71, 167, 92, 0.753);
+      }
+
+      .faq {
+        padding: 1.2rem 1.2rem;
+        border-radius: 24px 8px 24px 8px;
+      }
+
+      .faq h3 {
+        font-size: 1.2rem;
+        padding-right: 2.5rem;
+      }
+
+      .faq h3::after {
+        font-size: 1.8rem;
+      }
+    }
+
+    @media (max-width: 420px) {
+      .container {
+        padding: 2rem 1rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+
+      nav a {
+        font-size: 0.85rem;
+        padding: 0.3rem 0.6rem;
+      }
+
+      .faq .answer {
+        font-size: 0.95rem;
+      }
+    }
+
+    @media (min-width: 1600px) {
+      .container {
+        max-width: 80rem;
+      }
+      .faq {
+        padding: 2rem 2.8rem;
+      }
+    }
+
+    footer {
+      background: #e6d9cc;
+      text-align: center;
+      padding: 1.5rem 1rem;
+      margin-top: 3rem;
+      color: #2c5e3f;
+      font-weight: 500;
+      border-top: 3px solid #aabf8f;
+      box-shadow: 0 -8px 20px rgba(121, 102, 74, 0.08);
+      font-size: clamp(0.9rem, 3vw, 1.1rem);
+      letter-spacing: 0.3px;
+    }
+
+    
+    .faq:focus-visible {
+      outline: 3px solid var(--terracotta);
+      outline-offset: 4px;
+    }
+
+    .faq {
+      cursor: pointer;
+    }
+
+    a {
+      color: #5f4a2e;
+    }
+
+    .faq.active {
+      background: rgba(251, 241, 225, 0.9);
+      border-left-color: #aa6d50;
+    }
+
+    .answer p {
+      margin: 0.8rem 0;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Sahifasal</div>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="about.html">About</a>
+    <a href="login.html">Login</a>
+  </nav>
+</header>
+
+
+<div class="container">
+  <h1>frequently asked questions</h1>
+
+  
+  <div class="faq" onclick="toggleFAQ(this)" role="button" tabindex="0" aria-expanded="false">
+    <h3>What is Sahifasal?</h3>
+    <div class="answer">
+      Sahifasal is a smart farming platform that helps farmers decide what
+      and when to grow using climate and market data.
+    </div>
+  </div>
+
+  
+  <div class="faq" onclick="toggleFAQ(this)" role="button" tabindex="0" aria-expanded="false">
+    <h3>How does season prediction work?</h3>
+    <div class="answer">
+      We analyze weather forecast data and rainfall trends to estimate
+      season duration and sowing windows.
+    </div>
+  </div>
+
+  
+  <div class="faq" onclick="toggleFAQ(this)" role="button" tabindex="0" aria-expanded="false">
+    <h3>Are market prices real?</h3>
+    <div class="answer">
+      Yes. Market prices are fetched from government agricultural market APIs.
+    </div>
+  </div>
+
+  
+  <div class="faq" onclick="toggleFAQ(this)" role="button" tabindex="0" aria-expanded="false">
+    <h3>Can this help increase profit?</h3>
+    <div class="answer">
+      Yes. By choosing crops based on demand and climate conditions,
+      farmers can reduce risk and improve profitability.
+    </div>
+  </div>
+</div>
+
+  © 2026 Sahifasal · rooted in smart agriculture · field-first approach
+</footer>
+
+<script>
+  function toggleFAQ(element) {
+    element.classList.toggle('active');
+    const expanded = element.classList.contains('active');
+    element.setAttribute('aria-expanded', expanded);
+  }
+
+  
+  document.querySelectorAll('.faq').forEach(faq => {
+    faq.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleFAQ(faq);
+      }
+    });
+  });
+</script>
+
+</body>
+</html>

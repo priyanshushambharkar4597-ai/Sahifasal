@@ -1,0 +1,609 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Profile | Sahifasal</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', 'Poppins', sans-serif;
+}
+
+body {
+  background: linear-gradient(145deg, #f0faf0 0%, #e0f3e5 100%);
+  color: #0a4228;
+  min-height: 100vh;
+  position: relative;
+  overflow-x: hidden;
+}
+
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" opacity="0.03"><path d="M30,70 Q45,45 70,55 Q58,80 30,70" fill="%231b6e3a" transform="rotate(15 50 60)"/><path d="M130,40 Q150,20 170,35 Q155,60 130,40" fill="%231b6e3a" transform="rotate(-5 150 40)"/><path d="M80,150 Q100,125 125,140 Q110,170 80,150" fill="%231b6e3a" transform="rotate(25 100 140)"/><path d="M160,150 Q180,135 190,165 Q165,175 160,150" fill="%231b6e3a" transform="rotate(-10 175 155)"/></svg>');
+  background-repeat: repeat;
+  background-size: 220px 220px;
+  pointer-events: none;
+  animation: drift 80s linear infinite;
+  z-index: 0;
+}
+
+@keyframes drift {
+  from { background-position: 0 0; }
+  to { background-position: 300px 300px; }
+}
+
+
+.topbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 70px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 30px;
+  box-shadow: 0 8px 20px rgba(0, 40, 0, 0.1);
+  z-index: 1000;
+  border-bottom: 2px solid #b8e0b8;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.menu-btn {
+  font-size: 28px;
+  cursor: pointer;
+  color: #1b6e3a;
+  transition: transform 0.2s, color 0.2s;
+}
+
+.menu-btn:hover {
+  transform: scale(1.1);
+  color: #0b532a;
+}
+
+.logo-box img {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  box-shadow: 0 4px 10px rgba(0, 60, 0, 0.2);
+  transition: transform 0.3s;
+}
+
+.logo-box img:hover {
+  transform: rotate(5deg) scale(1.05);
+}
+
+.app-name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1b6e3a;
+  letter-spacing: -0.3px;
+}
+
+
+.sidebar {
+  position: fixed;
+  top: 70px;
+  left: -280px;
+  width: 280px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  transition: left 0.35s cubic-bezier(0.2, 0.9, 0.3, 1);
+  padding-top: 25px;
+  box-shadow: 6px 0 25px rgba(0, 40, 0, 0.15);
+  z-index: 999;
+  border-right: 2px solid #c0e4c0;
+}
+
+.sidebar.active {
+  left: 0;
+}
+
+.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px 28px;
+  text-decoration: none;
+  color: #0c5132;
+  transition: all 0.25s;
+  font-weight: 500;
+  border-left: 4px solid transparent;
+}
+
+.sidebar a:hover {
+  background: #daf5da;
+  border-left-color: #2e8b57;
+  padding-left: 35px;
+  color: #054d27;
+}
+
+
+.content {
+  margin-top: 90px;
+  padding: 35px 6%;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  z-index: 10;
+}
+
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: 30px;
+}
+
+
+.card {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 32px 16px 32px 16px;
+  padding: 28px 24px;
+  border: 1px solid rgba(150, 210, 150, 0.4);
+  box-shadow: 0 20px 35px -8px rgba(30, 80, 30, 0.2);
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 30px 45px -12px #206f3a;
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #9fdf9f;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(90deg, #22c55e, #0f793a);
+}
+
+
+.avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  margin: 0 auto 15px;
+  overflow: hidden;
+  border: 4px solid #22c55e;
+  box-shadow: 0 10px 20px rgba(0, 60, 0, 0.3);
+  transition: transform 0.3s;
+}
+
+.avatar:hover {
+  transform: scale(1.05);
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  background: #ddd; 
+}
+
+.center {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.center h3 {
+  color: #1b6e3a;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.center p {
+  color: #4f7b5f;
+  margin: 5px 0 15px;
+  font-weight: 500;
+}
+
+
+.upload {
+  margin: 15px 0;
+}
+
+.upload input[type="file"] {
+  background: #ecfdf5;
+  border: 1px dashed #9fdf9f;
+  border-radius: 40px;
+  padding: 10px 15px;
+  width: 100%;
+  color: #0a4a2a;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.upload input[type="file"]::-webkit-file-upload-button {
+  background: #1e8449;
+  border: none;
+  color: white;
+  padding: 8px 18px;
+  border-radius: 40px;
+  font-weight: 600;
+  margin-right: 15px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.upload input[type="file"]:hover {
+  border-color: #22c55e;
+  background: #e0ffe0;
+}
+
+.form-group {
+  margin-bottom: 22px;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2b5d3b;
+  display: block;
+  margin-bottom: 5px;
+  letter-spacing: 0.3px;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 16px;
+  border: 2px solid #e0f0e0;
+  background: #f9fffc;
+  font-size: 1rem;
+  outline: none;
+  transition: all 0.3s;
+  color: #0f422a;
+}
+
+.form-group input:focus {
+  border-color: #22c55e;
+  box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.1);
+  background: white;
+}
+
+.form-group input[readonly] {
+  background: #eaf5ea;
+  border-color: #c0e0c0;
+  color: #2b6d40;
+  font-weight: 500;
+  cursor: default;
+}
+
+
+.btn {
+  padding: 14px 24px;
+  border: none;
+  border-radius: 40px;
+  background: linear-gradient(145deg, #2ecc71, #1e8449);
+  color: white;
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 10px 20px -5px #0f4a1a;
+  border: 1px solid rgba(200, 255, 200, 0.3);
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+  transition: left 0.6s;
+}
+
+.btn:hover::before {
+  left: 100%;
+}
+
+.btn:hover {
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 15px 30px -5px #0f5a1f;
+  background: linear-gradient(145deg, #3be085, #259b54);
+}
+
+.btn:active {
+  transform: translateY(2px);
+  box-shadow: 0 8px 15px -3px #0f4a1a;
+}
+
+.settings {
+  margin-top: 35px;
+  border-top: 2px solid #dcfce7;
+  padding-top: 25px;
+}
+
+.settings h2 {
+  color: #1b6e3a;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.setting {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0;
+  color: #2c5d3c;
+  border-bottom: 1px solid #ecfdf5;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.setting span:first-child {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.setting span:last-child {
+  background: #dcfce7;
+  padding: 6px 18px;
+  border-radius: 40px;
+  color: #0f6e2f;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border: 1px solid #9fdf9f;
+}
+
+
+.footer {
+  margin-top: 50px;
+  text-align: center;
+  color: #4b7a5a;
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 20px 0;
+  border-top: 2px solid #d0f0d0;
+  background: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+  border-radius: 60px 60px 0 0;
+}
+
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #d4ead4;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(145deg, #2d6a42, #1d472a);
+  border-radius: 10px;
+  border: 2px solid #9fcf9f;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(145deg, #3f8b5a, #2b5c38);
+}
+
+/* ===== ANIMATIONS ===== */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+  animation: fadeUp 0.5s ease forwards;
+}
+
+
+@media (max-width: 900px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
+  .content {
+    padding: 25px 5%;
+  }
+}
+
+@media (max-width: 600px) {
+  .topbar {
+    padding: 0 18px;
+  }
+  .app-name {
+    font-size: 1.2rem;
+  }
+  .menu-btn {
+    font-size: 24px;
+  }
+  .logo-box img {
+    width: 40px;
+    height: 40px;
+  }
+  .card {
+    padding: 20px 16px;
+  }
+  .avatar {
+    width: 120px;
+    height: 120px;
+  }
+  .btn {
+    padding: 12px 20px;
+    font-size: 1rem;
+  }
+  .settings h2 {
+    font-size: 1.3rem;
+  }
+  .setting span:last-child {
+    padding: 4px 12px;
+    font-size: 0.8rem;
+  }
+}
+
+@media (max-width: 380px) {
+  .setting {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  .setting span:last-child {
+    align-self: flex-start;
+  }
+}
+
+
+a:focus-visible, button:focus-visible, input:focus-visible {
+  outline: 3px solid #7fc28c;
+  outline-offset: 3px;
+}
+
+</style>
+</head>
+
+<body>
+
+
+<div class="topbar">
+  <div class="left">
+    <div class="menu-btn" onclick="toggleSidebar()">☰</div>
+    <div class="logo-box">
+      <img src="final logo.png" alt="Sahifasal Logo">
+    </div>
+    <div class="app-name">Sahifasal</div>
+  </div>
+</div>
+
+
+<div class="sidebar" id="sidebar">
+  <a href="dashboard.html"> Dashboard</a>
+  <a href="climate.html"> Climate Intelligence</a>
+  <a href="market.html"> Market Demand</a>
+  <a href="risk.html"> Risk Analysis</a>
+  <a href="planner.html"> Smart Planner</a>
+  <a href="profit.html"> Profit Calculator</a>
+  <a href="profile.html" class="active"> Profile</a>
+  <a href="govt.html">Govt Schemes</a>
+  <a href="index.html"> Logout</a>
+  
+</div>
+
+
+<div class="content">
+
+  <div class="profile-grid">
+
+    
+    <div class="card">
+      <div class="avatar">
+        <img src="" alt="Profile Picture">
+      </div>
+      <div class="center">
+        <h3>USER NAME</h3>
+        <p>Smart Farmer</p>
+        <div class="upload">
+          <input type="file" accept="image/*">
+        </div>
+        <button class="btn">Update Photo</button>
+      </div>
+    </div>
+
+    
+    <div class="card">
+      <h2 style="color: #1b6e3a; margin-bottom: 20px;">Profile Information</h2>
+
+      <div class="form-group">
+        <label>Full Name</label>
+        <input type="text" id="input-fullname" readonly value="Rajesh Kumar" style="background:#eaf5ea;">
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" id="input-email" readonly value="rajesh.k@farmer.com" style="background:#eaf5ea;">
+      </div>
+
+      <div class="form-group">
+        <label>Mobile Number</label>
+        <input type="text" id="input-phone" readonly value="+91 98765 43210" style="background:#eaf5ea;">
+      </div>
+
+      <div class="form-group">
+        <label>District</label>
+        <input type="text" id="input-district" placeholder="e.g., Sangli">
+      </div>
+
+      <button class="btn">Save Changes</button>
+
+      <div class="settings">
+        <h2>Settings</h2>
+
+        <div class="setting">
+          <span> Notifications</span>
+          <span>Enabled</span>
+        </div>
+
+        <div class="setting">
+          <span> Language</span>
+          <span>English</span>
+        </div>
+
+        <div class="setting">
+          <span> Account Status</span>
+          <span>Verified</span>
+        </div>
+
+        <div class="setting">
+          <span>Dark Mode</span>
+          <span>Off</span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    © 2026 Sahifasal — Smart Agriculture Platform
+  </div>
+
+</div>
+
+<script>
+function toggleSidebar() {
+  document.getElementById("sidebar").classList.toggle("active");
+}
+</script>
+
+
+<script type="module" src="profile.js"></script>
+
+</body>
+</html>

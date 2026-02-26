@@ -1,0 +1,695 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+<title>Sahifasal Register</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', 'Poppins', sans-serif;
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: transparent;
+    color: #f0fff0;
+    position: relative;
+}
+
+.bg-video {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: -2;
+}
+
+.video-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(
+        135deg,
+        rgba(27, 28, 27, 0.65) 0%,
+        rgba(14, 15, 14, 0.55) 50%,
+        rgba(8, 8, 8, 0.65) 100%
+    );
+    backdrop-filter: blur(2px);
+    z-index: -1;
+}
+
+.video-overlay::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200" viewBox="0 0 200 200"><filter id="noise"><feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="1" stitchTiles="stitch"/><feColorMatrix type="matrix" values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.15 0"/></filter><rect width="100%" height="100%" filter="url(%23noise)" opacity="0.15"/></svg>');
+    background-repeat: repeat;
+    opacity: 0.2;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+    animation: grainShift 12s infinite alternate;
+}
+
+@keyframes grainShift {
+    0% { transform: translate(0, 0); }
+    100% { transform: translate(2%, 2%); }
+}
+
+.leaf-particles {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.leaf {
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="%23aaffaa" opacity="0.15"><path d="M50,10 Q70,20 75,40 Q80,60 65,75 Q50,90 30,80 Q15,65 20,40 Q25,20 50,10"/></svg>') no-repeat center/contain;
+    opacity: 0.4;
+    animation: floatLeaf linear infinite;
+}
+
+.leaf:nth-child(1) {
+    top: 10%;
+    left: 5%;
+    width: 50px;
+    height: 50px;
+    animation-duration: 25s;
+    animation-delay: -2s;
+}
+.leaf:nth-child(2) {
+    top: 70%;
+    left: 85%;
+    width: 70px;
+    height: 70px;
+    animation-duration: 30s;
+    animation-delay: -10s;
+}
+.leaf:nth-child(3) {
+    top: 40%;
+    left: 20%;
+    width: 45px;
+    height: 45px;
+    animation-duration: 28s;
+    animation-delay: -5s;
+}
+.leaf:nth-child(4) {
+    top: 80%;
+    left: 15%;
+    width: 60px;
+    height: 60px;
+    animation-duration: 32s;
+    animation-delay: -15s;
+}
+.leaf:nth-child(5) {
+    top: 20%;
+    left: 90%;
+    width: 55px;
+    height: 55px;
+    animation-duration: 27s;
+    animation-delay: -7s;
+}
+
+@keyframes floatLeaf {
+    0% {
+        transform: rotate(0deg) translateY(0) translateX(0);
+    }
+    33% {
+        transform: rotate(5deg) translateY(-20px) translateX(15px);
+    }
+    66% {
+        transform: rotate(-3deg) translateY(10px) translateX(-15px);
+    }
+    100% {
+        transform: rotate(0deg) translateY(0) translateX(0);
+    }
+}
+
+.topbar {
+    background: rgba(20, 40, 25, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 30px;
+    box-shadow: 0 8px 20px rgba(0, 20, 0, 0.3);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    border-bottom: 2px solid rgba(100, 180, 100, 0.4);
+}
+
+.logo-area {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo-circle {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 40, 0, 0.4);
+    transition: transform 0.3s;
+}
+
+.logo-circle:hover {
+    transform: scale(1.05);
+}
+
+.logo-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.logo-area h3 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: #d0f5d0;
+    text-shadow:0 2px 5px #0f3f1a;
+    letter-spacing :-0.3px;
+}
+
+.topbar-buttons {
+    display: flex;
+    gap: 15px;
+}
+
+.topbar-buttons button {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 40px;
+    background: linear-gradient(135deg, #2ecc71, #1e8449);
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 8px 16px -6px #0f4a1a;
+    border: 1px solid rgba(200, 255, 200, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.topbar-buttons button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s;
+}
+
+.topbar-buttons button:hover::before {
+    left: 100%;
+}
+
+.topbar-buttons button:hover {
+    background: linear-gradient(135deg, #3be085, #259b54);
+    transform: translateY(-3px);
+    box-shadow: 0 15px 25px -8px #0e6a2a;
+}
+
+.main {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    position: relative;
+    z-index: 10;
+}
+
+.login-box {
+    background: rgba(25, 45, 30, 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 45px 40px;
+    border-radius: 40px 16px 40px 16px;
+    width: 100%;
+    max-width: 440px;
+    box-shadow: 0 30px 50px rgba(0, 20, 0, 0.7), 0 0 0 1px rgba(100, 200, 100, 0.3) inset;
+    border: 1px solid rgba(80, 180, 80, 0.4);
+    animation: floatIn 0.8s cubic-bezier(0.2, 0.9, 0.3, 1);
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+@keyframes floatIn {
+    0% { opacity: 0; transform: translateY(30px) scale(0.96); }
+    100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.login-box:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 40px 60px rgba(0, 40, 0, 0.8), 0 0 0 1px rgba(150, 255, 150, 0.4) inset;
+}
+
+.login-box h2 {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #daf5da;
+    font-size: 2rem;
+    font-weight: 700;
+    text-shadow: 0 4px 10px #0a3a1a;
+    letter-spacing: -0.3px;
+}
+
+input {
+    width: 100%;
+    padding: 16px 18px;
+    margin: 12px 0;
+    border: 2px solid transparent;
+    border-radius: 16px;
+    background: rgba(15, 50, 25, 0.7);
+    color: #edffe3;
+    font-size: 1rem;
+    outline: none;
+    transition: all 0.3s;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(100, 180, 100, 0.3);
+}
+
+input::placeholder {
+    color: #b0d8b0;
+    font-weight: 400;
+}
+
+input:focus {
+    border-color: #22c55e;
+    background: rgba(20, 70, 30, 0.8);
+    box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.15);
+}
+
+button {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 40px;
+    background: linear-gradient(145deg, #2ecc71, #1e8449);
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    box-shadow: 0 12px 24px -8px #0f4a1a;
+    border: 1px solid rgba(200, 255, 200, 0.3);
+    position: relative;
+    overflow: hidden;
+    margin-top: 8px;
+}
+
+button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.6s;
+}
+
+button:hover::before {
+    left: 100%;
+}
+
+button:hover {
+    transform: translateY(-4px) scale(1.02);
+    box-shadow: 0 20px 30px -8px #0a4a1a;
+    background: linear-gradient(145deg, #3be085, #259b54);
+}
+
+button:active {
+    transform: translateY(2px);
+    box-shadow: 0 8px 16px -4px #0a3a1a;
+}
+
+
+.secondary-btn {
+    background: linear-gradient(145deg, #38bdf8, #0284c7);
+    box-shadow: 0 12px 24px -8px #0369a1;
+    margin-top: 5px;
+}
+
+.secondary-btn:hover {
+    background: linear-gradient(145deg, #5ac8fa, #0a97e6);
+    box-shadow: 0 20px 30px -8px #075985;
+}
+
+hr {
+    margin: 25px 0 20px;
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #8fca8f, transparent);
+}
+
+.extra {
+    text-align: center;
+    margin-top: 20px;
+    color: #d0f0d0;
+}
+
+.extra a {
+    color: #b0f0b0;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.2s;
+    border-bottom: 1px solid transparent;
+}
+
+.extra a:hover {
+    color: #ffffff;
+    border-bottom-color: #9fdf9f;
+}
+
+footer {
+    text-align: center;
+    padding: 18px 0;
+    color: #d0f5d0;
+    font-size: 0.95rem;
+    font-weight: 500;
+    background: rgba(10, 25, 15, 0.8);
+    backdrop-filter: blur(8px);
+    border-top: 2px solid #4a8b5f;
+    box-shadow: 0 -10px 25px rgba(0, 30, 0, 0.3);
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+::-webkit-scrollbar-track {
+    background: #1a3a24;
+}
+::-webkit-scrollbar-thumb {
+    background: linear-gradient(145deg, #2d6a42, #1d472a);
+    border-radius: 10px;
+    border: 2px solid #4f8b62;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(145deg, #3f8b5a, #2b5c38);
+}
+
+@media (max-width: 700px) {
+    .topbar {
+        padding: 10px 20px;
+    }
+    .logo-area h3 {
+        font-size: 1.4rem;
+    }
+    .logo-circle {
+        width: 45px;
+        height: 45px;
+    }
+    .topbar-buttons button {
+        padding: 8px 18px;
+        font-size: 0.95rem;
+    }
+    .login-box {
+        padding: 35px 30px;
+        max-width: 400px;
+    }
+    .login-box h2 {
+        font-size: 1.8rem;
+    }
+    input {
+        padding: 14px 16px;
+    }
+    button {
+        padding: 14px;
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 500px) {
+    .topbar {
+        padding: 8px 15px;
+    }
+    .logo-area {
+        gap: 8px;
+    }
+    .logo-area h3 {
+        font-size: 1.2rem;
+    }
+    .logo-circle {
+        width: 40px;
+        height: 40px;
+    }
+    .topbar-buttons {
+        gap: 8px;
+    }
+    .topbar-buttons button {
+        padding: 7px 14px;
+        font-size: 0.85rem;
+    }
+    .login-box {
+        padding: 30px 22px;
+        max-width: 360px;
+    }
+    .login-box h2 {
+        font-size: 1.6rem;
+        margin-bottom: 20px;
+    }
+    input {
+        padding: 12px 14px;
+        font-size: 0.95rem;
+        margin: 8px 0;
+    }
+    button {
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+    hr {
+        margin: 20px 0 15px;
+    }
+    .extra {
+        margin-top: 15px;
+        font-size: 0.9rem;
+    }
+    footer {
+        padding: 15px 0;
+        font-size: 0.85rem;
+    }
+   
+    .leaf:nth-child(3), .leaf:nth-child(4), .leaf:nth-child(5) {
+        display: none;
+    }
+    .leaf {
+        opacity: 0.25;
+    }
+}
+
+@media (max-width: 380px) {
+    .topbar {
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+        text-align: center;
+        padding: 12px 10px;
+    }
+    .logo-area {
+        justify-content: center;
+    }
+    .topbar-buttons {
+        width: 100%;
+        justify-content: center;
+    }
+    .login-box {
+        padding: 25px 18px;
+        max-width: 320px;
+    }
+    .login-box h2 {
+        font-size: 1.4rem;
+    }
+    input {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+    button {
+        padding: 10px;
+        font-size: 0.9rem;
+    }
+    .leaf {
+        display: none;
+    }
+}
+
+a:focus-visible, button:focus-visible, input:focus-visible {
+    outline: 3px solid #7fc28c;
+    outline-offset: 3px;
+}
+</style>
+</head>
+<body>
+
+
+<video class="bg-video" autoplay muted loop playsinline>
+    <source src="LOGIN.mp4" type="video/mp4">
+</video>
+
+
+<div class="video-overlay"></div>
+
+
+<div class="leaf-particles">
+    <div class="leaf"></div>
+    <div class="leaf"></div>
+    <div class="leaf"></div>
+    <div class="leaf"></div>
+    <div class="leaf"></div>
+</div>
+
+
+<header class="topbar">
+    <div class="logo-area">
+        <div class="logo-circle">
+            <img src="final logo.png" alt="Sahifasal Logo">
+        </div>
+        <h3>Sahifasal</h3>
+    </div>
+    <div class="topbar-buttons">
+        <button onclick="window.location.href='index.html'">Home</button>
+        <button onclick="window.location.href='login.html'">Login</button>
+    </div>
+</header>
+
+
+<div class="main">
+    <div class="login-box">
+        <h2>Create Account</h2>
+
+        <input type="text" id="name" placeholder="Full name">
+        <input type="email" id="email" placeholder="Email address">
+        <input type="tel" id="phone" placeholder="Phone number">
+        <input type="text" id="dist" placeholder="District">
+        <input type="password" id="password" placeholder="Password">
+
+        <button onclick="registerUser()">Register</button>
+
+        <div class="extra">
+            Already have an account? <a href="login.html">Log in</a>
+        </div>
+    </div>
+</div>
+
+<footer>
+    © 2026 Sahifasal | Smart Agriculture Platform
+</footer>
+
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
+import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBH-CX5-8VUQJ3ueS_I57WX5X7ywjlKJNY",
+    authDomain: "sahifasal.firebaseapp.com",
+    projectId: "sahifasal",
+    storageBucket: "sahifasal.firebasestorage.app",
+    messagingSenderId: "488779378198",
+    appId: "1:488779378198:web:dfa18941ca4c6dc4ee4f37"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+window.registerUser = async function() {
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
+    const phone = document.getElementById("phone").value.trim();
+    const dist = document.getElementById("dist").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if (!name || !email || !password || !phone || !dist) {
+        alert("Please fill in all fields");
+        return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        alert("Please enter a valid email address");
+        return;
+    }
+
+    if (phone.length < 10) {
+        alert("Please enter a valid phone number (min 10 digits)");
+        return;
+    }
+
+    if (password.length < 6) {
+        alert("Password should be at least 6 characters");
+        return;
+    }
+
+    const registerBtn = document.querySelector('button');
+    registerBtn.disabled = true;
+    registerBtn.textContent = 'Creating account...';
+
+    try {
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCred.user;
+
+        await setDoc(doc(db, "users", user.uid), {
+            name: name,
+            email: email,
+            phone: phone,
+            district: dist,
+            createdAt: new Date(),
+            userId: user.uid
+        });
+
+        alert("✅ Registration successful!");
+        window.location.href = "setup.html";
+    } catch (error) {
+        console.error(error);
+        let errorMessage = error.message;
+        if (error.code === 'auth/email-already-in-use') {
+            errorMessage = "Email already registered";
+        } else if (error.code === 'auth/invalid-email') {
+            errorMessage = "Invalid email address";
+        } else if (error.code === 'auth/weak-password') {
+            errorMessage = "Password is too weak (minimum 6 characters)";
+        } else if (error.code === 'auth/network-request-failed') {
+            errorMessage = "Network error. Check your connection.";
+        }
+        alert("❌ Error: " + errorMessage);
+        registerBtn.disabled = false;
+        registerBtn.textContent = 'Register';
+    }
+};
+</script>
+
+</body>
+</html>

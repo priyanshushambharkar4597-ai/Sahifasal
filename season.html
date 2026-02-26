@@ -1,0 +1,514 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Season Predictor | Sahifasal · smart farming</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(145deg, #f0fdf4 0%, #e6f7ec 100%);
+      color: #065f46;
+      min-height: 100vh;
+    }
+
+   
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #d1fae5; border-radius: 12px; }
+    ::-webkit-scrollbar-thumb { background: #16a34a; border-radius: 12px; }
+
+    #menu-toggle { display: none; }
+
+   
+    .topbar {
+      height: 70px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      display: flex;
+      align-items: center;
+      padding: 0 28px;
+      gap: 18px;
+      box-shadow: 0 6px 18px rgba(0, 60, 20, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid #bef2d5;
+    }
+
+    .menu-icon {
+      font-size: 30px;
+      cursor: pointer;
+      color: #0d7c3f;
+      transition: all 0.2s ease;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 12px;
+      background: #ffffffb3;
+    }
+    .menu-icon:hover {
+      
+      
+      transform: scale(1.05) rotate(0.5deg);
+      box-shadow: 0 6px 12px #9adbb5;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 650;
+      color: #0a5c2e;
+      font-size: 1.3rem;
+      letter-spacing: -0.02em;
+    }
+
+    .app-logo {
+      width: 44px;
+      height: 90px;
+      border-radius: 30% 70% 70% 30% / 30% 55% 45% 70%;
+      object-fit: cover;
+      border: 2px solid white;
+    }
+
+  
+    .sidebar {
+      position: fixed;
+      top: 70px;
+      left: -280px;
+      width: 260px;
+      height: calc(100% - 70px);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      padding: 24px 16px;
+      transition: left 0.35s cubic-bezier(0.23, 1, 0.32, 1);
+      display: flex;
+      flex-direction: column;
+      border-right: 2px solid #bef2d5;
+      box-shadow: 8px 0 20px rgba(0, 60, 0, 0.1);
+      z-index: 999;
+    }
+
+    .sidebar a {
+      color: #115e2f;
+      text-decoration: none;
+      padding: 14px 18px;
+      border-radius: 18px;
+      margin: 6px 0;
+      font-weight: 520;
+      font-size: 1.05rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      transition: 0.2s;
+      border: 1px solid transparent;
+    }
+
+    .sidebar a:hover {
+      background: #e6f7e6;
+      border-color: #86d9a4;
+      transform: translateX(8px) scale(1.02);
+      box-shadow: 0 4px 10px #b7e9c9;
+    }
+
+    #menu-toggle:checked ~ .sidebar {
+      left: 0;
+    }
+
+   
+    .content {
+      padding: 40px 6%;
+      transition: margin-left 0.3s ease;
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    #menu-toggle:checked ~ .content {
+      margin-left: 260px;
+    }
+
+    h1 {
+      font-size: 2.8rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #166534, #22c55e);
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: inline-block;
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .subhead {
+      color: #2b6e4a;
+      font-size: 1.2rem;
+      margin-bottom: 30px;
+      border-left: 5px solid #22c55e;
+      padding-left: 18px;
+      background: #ffffffd0;
+      border-radius: 0 40px 40px 0;
+      width: fit-content;
+      backdrop-filter: blur(4px);
+      padding: 10px 24px;
+    }
+
+    .predict-btn {
+      background: linear-gradient(145deg, #16a34a, #15803d);
+      border: none;
+      padding: 16px 32px;
+      border-radius: 60px;
+      color: white;
+      font-weight: 600;
+      font-size: 1.25rem;
+      cursor: pointer;
+      box-shadow: 0 12px 24px -8px #86d9a4;
+      transition: 0.25s;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      border: 1px solid #bef2d5;
+      margin-bottom: 30px;
+    }
+    .predict-btn:hover {
+      background: linear-gradient(145deg, #15803d, #166534);
+      transform: scale(1.02) translateY(-4px);
+      box-shadow: 0 22px 30px -8px #5bb981;
+    }
+    .predict-btn:active { transform: scale(0.98); }
+
+    
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 28px;
+      margin-top: 30px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 26px 22px;
+      border-radius: 36px;
+      border: 1px solid #bbf7d0;
+      box-shadow: 0 18px 40px -12px #9adbb5;
+      transition: all 0.25s;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card:hover {
+      transform: translateY(-12px) scale(1.01);
+      border-color: #4ade80;
+      box-shadow: 0 24px 45px -8px #6fbf8c;
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    .card h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #0f5e32;
+      border-bottom: 3px dotted #bbf7d0;
+      padding-bottom: 12px;
+    }
+
+    .result {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      background: #f0fcf4;
+      padding: 18px;
+      border-radius: 24px;
+      color: #14532d;
+      box-shadow: inset 0 2px 6px #c0e8cf;
+      flex: 1;
+      white-space: pre-line;
+      border: 1px solid #a7e3b7;
+    }
+
+    
+    .insight-card {
+      grid-column: span 2;
+      background: #d9f0e1;
+    }
+
+    
+    .loading {
+      background: linear-gradient(90deg, #e9f9ef 25%, #f7fff9 50%, #e9f9ef 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.6s infinite;
+      border-radius: 20px;
+      min-height: 80px;
+    }
+    @keyframes shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    footer {
+      margin-top: 60px;
+      background: rgba(14, 14, 14, 0.7);
+      backdrop-filter: blur(5px);
+      text-align: center;
+      padding: 22px;
+      color: #eff8f3;
+      border-radius: 60px 60px 0 0;
+      font-weight: 600;
+      border-top: 2px solid #bbf7d0;
+    }
+
+   
+    @media (max-width: 768px) {
+      .content { padding: 20px 5%; }
+      h1 { font-size: 2rem; }
+      #menu-toggle:checked ~ .content { margin-left: 0; }
+      .sidebar { width: 240px; }
+      .grid { gap: 18px; }
+      .card h2 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<input type="checkbox" id="menu-toggle">
+
+<header class="topbar">
+  <label for="menu-toggle" class="menu-icon" aria-label="toggle menu">☰</label>
+  <div class="logo">
+    <img src="final logo.png" class="app-logo" alt="sahifasal icon">
+    <span>Sahifasal  Season</span>
+  </div>
+</header>
+
+<div class="sidebar">
+  <a href="#"> Dashboard</a>
+  <a href="#"> Climate Intel</a>
+  <a href="#"> Market Demand</a>
+  <a href="#"> Risk Analysis</a>
+  <a href="#"> Smart Planner</a>
+  <a href="#"> Profit Calc</a>
+  <a href="#"> Govt Schemes</a>
+  <a href="#"> Profile</a>
+  <a href="#" style="margin-top: auto; background: #f0fdf4;">🚪 Logout</a>
+</div>
+
+<main class="content">
+  <h1>🌦 season · duration predictor</h1>
+  <div class="subhead">real‑time forecast + climate patterns · central india</div>
+
+  <button class="predict-btn" id="predictBtn" onclick="predictSeason()">
+    <span></span> predict current season <span></span>
+  </button>
+
+  <div class="grid" id="cardGrid">
+    
+    <div class="card" id="card-season">
+      <h2> Current Season</h2>
+      <div id="seasonName" class="result">—</div>
+    </div>
+    <div class="card" id="card-duration">
+      <h2> est. duration</h2>
+      <div id="seasonDuration" class="result">—</div>
+    </div>
+    <div class="card" id="card-rain">
+      <h2>rainfall trend</h2>
+      <div id="rainTrend" class="result">—</div>
+    </div>
+    <div class="card" id="card-crop">
+      <h2>sowing advice</h2>
+      <div id="cropAdvice" class="result">—</div>
+    </div>
+  </div>
+
+  
+  <div style="margin-top: 30px;" id="extraInsight"></div>
+</main>
+
+<footer>
+  © 2026 Sahifasal — living intelligence · made for earth
+</footer>
+
+<script>
+  (function() {
+    
+  })();
+
+  async function predictSeason() {
+    const btn = document.getElementById('predictBtn');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<span>⏳</span> scanning atmosphere...';
+    btn.disabled = true;
+
+    
+    const resultDivs = ['seasonName', 'seasonDuration', 'rainTrend', 'cropAdvice'];
+    resultDivs.forEach(id => {
+      const el = document.getElementById(id);
+      el.classList.add('loading');
+      el.innerText = '';
+    });
+
+    try {
+      const lat = 20.59;  
+      const lon = 78.96;
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_max,temperature_2m_min,precipitation_sum&timezone=Asia/Kolkata&forecast_days=7`;
+
+      const res = await fetch(url);
+      if (!res.ok) throw new Error('network issue');
+      const data = await res.json();
+
+      
+      const dates = data.daily.time;
+      const maxT = data.daily.temperature_2m_max;
+      const minT = data.daily.temperature_2m_min;
+      const rain = data.daily.precipitation_sum;
+
+      
+      const now = new Date();
+      const month = now.getMonth() + 1;  
+      const day = now.getDate();
+
+      
+      let baseSeason = '';
+      if (month >= 6 && month <= 9) baseSeason = 'monsoon';
+      else if (month >= 10 && month <= 11) baseSeason = 'transition'; // post-monsoon
+      else if (month === 12 || month === 1 || month === 2) baseSeason = 'winter';
+      else baseSeason = 'summer'; // mar, apr, may
+
+      
+      const avgMax = maxT.reduce((a, b) => a + b, 0) / maxT.length;
+      const totalRain = rain.reduce((a, b) => a + b, 0);
+      const rainyDays = rain.filter(r => r > 2.5).length; // days with >2.5mm
+
+      let detectedSeason = baseSeason;
+      
+      if (totalRain > 20 && rainyDays >= 3) detectedSeason = 'monsoon';
+      else if (avgMax > 36 && rainyDays < 2) detectedSeason = 'summer';
+      else if (avgMax < 28 && minT.reduce((a,b)=>a+b,0)/minT.length < 16) detectedSeason = 'winter';
+      else if (totalRain > 5 && totalRain <= 20) detectedSeason = 'transition'; // light rains
+
+     
+      let seasonName = '', durationMsg = '', rainTrendMsg = '', cropMsg = '', explanation = '';
+
+      const endDates = {
+        summer: new Date(now.getFullYear(), 5, 15),  // roughly june 15
+        monsoon: new Date(now.getFullYear(), 8, 30), // sep 30
+        winter: new Date(now.getFullYear(), 1, 28),  // feb 28 (ignore leap casually)
+        transition: new Date(now.getFullYear(), 10, 30) // nov 30
+      };
+     
+      for (let s in endDates) {
+        if (endDates[s] < now) endDates[s].setFullYear(now.getFullYear() + 1);
+      }
+
+      let endDate;
+      switch (detectedSeason) {
+        case 'summer': 
+          seasonName = ' summer'; 
+          endDate = endDates.summer;
+          break;
+        case 'monsoon': 
+          seasonName = ' monsoon'; 
+          endDate = endDates.monsoon;
+          break;
+        case 'winter': 
+          seasonName = ' winter'; 
+          endDate = endDates.winter;
+          break;
+        default: 
+          seasonName = ' transition'; 
+          endDate = endDates.transition;
+      }
+
+      const remainingDays = Math.max(1, Math.ceil((endDate - now) / (1000*60*60*24)));
+
+     
+      if (detectedSeason === 'monsoon') {
+        rainTrendMsg = ` ${totalRain.toFixed(1)}mm expected next week · ${rainyDays} rainy days.`;
+        cropMsg = ' ideal for paddy, soybean, cotton. Watch for waterlogging.';
+        explanation = 'Southwest monsoon pattern active. Intermittent heavy spells likely.';
+      } else if (detectedSeason === 'summer') {
+        rainTrendMsg = ` very dry, avg max ${avgMax.toFixed(1)}°C. Heat stress likely.`;
+        cropMsg = ' plant heat‑tolerant millets, maize with mulch. Drip irrigation recommended.';
+        explanation = 'High pressure holding temperatures up. No significant rain.';
+      } else if (detectedSeason === 'winter') {
+        rainTrendMsg = ` cool & dry, night temps ~${(minT.reduce((a,b)=>a+b,0)/minT.length).toFixed(1)}°C.`;
+        cropMsg = ' excellent for wheat, mustard, peas. Protect from frost.';
+        explanation = 'Stable winter airmass, foggy mornings possible.';
+      } else {
+        rainTrendMsg = ` mixed signals, total rain ${totalRain.toFixed(1)}mm, temps moderate.`;
+        cropMsg = 'short duration crops (greens, radish). Prepare kharif planning.';
+        explanation = 'Seasonal transition: atmosphere unsettled.';
+      }
+
+     
+      durationMsg = `${remainingDays} more days (until ${endDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}).\n${explanation}`;
+
+     
+      const maxMean = (maxT.reduce((a,b)=>a+b,0)/maxT.length).toFixed(1);
+      const minMean = (minT.reduce((a,b)=>a+b,0)/minT.length).toFixed(1);
+      rainTrendMsg += `  ${maxMean}°C max / ${minMean}°C min.`;
+
+     
+      document.getElementById('seasonName').innerText = seasonName;
+      document.getElementById('seasonDuration').innerText = durationMsg;
+      document.getElementById('rainTrend').innerText = rainTrendMsg;
+      document.getElementById('cropAdvice').innerText = cropMsg;
+
+      
+      resultDivs.forEach(id => document.getElementById(id).classList.remove('loading'));
+
+     
+      let extraDiv = document.getElementById('extraInsight');
+      if (!extraDiv) {
+        extraDiv = document.createElement('div');
+        extraDiv.id = 'extraInsight';
+        document.querySelector('.content').appendChild(extraDiv);
+      }
+      extraDiv.innerHTML = `
+        <div class="grid" style="margin-top:0;">
+          <div class="card" style="grid-column:span 2; background: #e6f7e6;">
+            <h2> forecast fingerprint</h2>
+            <div class="result" style="display:flex; gap:15px; flex-wrap:wrap;">
+              <span> next 7d max: ${maxT.map(t => t.toFixed(0)+'°').join(' · ')}</span><br>
+              <span> rain (mm): ${rain.map(r => r.toFixed(1)).join(' · ')}</span>
+              <span style="font-size:0.9rem; opacity:0.8;">→ detected: ${detectedSeason} · confidence ${rainyDays>3?'high':'moderate'}</span>
+            </div>
+          </div>
+        </div>
+      `;
+
+    } catch (err) {
+      console.warn(err);
+      alert(' forecast data unavailable — using seasonal defaults.');
+     
+      document.getElementById('seasonName').innerText = ' local climate';
+      document.getElementById('seasonDuration').innerText = 'approx 45 days (based on historical)';
+      document.getElementById('rainTrend').innerText = 'dry spell likely, check dashboard';
+      document.getElementById('cropAdvice').innerText = 'sow heat-tolerant varieties';
+      resultDivs.forEach(id => document.getElementById(id).classList.remove('loading'));
+    } finally {
+      btn.innerHTML = originalText;
+      btn.disabled = false;
+    }
+  }
+
+  
+  window.onload = () => {
+   
+  };
+</script>
+
+
+</body>
+</html>

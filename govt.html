@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Government Schemes | Sahifasal</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: linear-gradient(145deg, #f8fef9 0%, #e6f7f0 100%);
+  color: #0f2e1a;
+  min-height: 100vh;
+}
+
+
+.topbar {
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 70px;
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(14px);
+  display: flex;
+  align-items: center;
+  padding: 0 30px;
+  box-shadow: 0 6px 20px rgba(20, 80, 20, 0.15);
+  z-index: 1000;
+  border-bottom: 2px solid #a7d7b5;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.menu-btn {
+  font-size: 28px;
+  cursor: pointer;
+  color: #1e6b3b;
+  transition: transform 0.2s;
+}
+
+.menu-btn:hover {
+  transform: scale(1.1);
+  color: #0a4f2a;
+}
+
+.logo-box img {
+  height: 48px;
+  width: auto;
+  border-radius: 50%;
+  box-shadow: 0 4px 12px rgba(0, 60, 0, 0.2);
+  transition: transform 0.3s;
+}
+
+.logo-box img:hover {
+  transform: rotate(5deg) scale(1.05);
+}
+
+.app-name {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: #1b5e3a;
+  letter-spacing: -0.3px;
+  text-shadow: 0 2px 5px rgba(80, 150, 80, 0.2);
+}
+
+
+.sidebar {
+  position: fixed;
+  top: 70px;
+  left: -280px;
+  width: 280px;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(16px);
+  transition: left 0.4s cubic-bezier(0.2, 0.9, 0.3, 1);
+  padding-top: 20px;
+  box-shadow: 5px 0 25px rgba(0, 50, 0, 0.2);
+  z-index: 999;
+  border-right: 2px solid #b8e0c0;
+}
+
+.sidebar.active {
+  left: 0;
+}
+
+.sidebar a {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  color: #1b4c2e;
+  text-decoration: none;
+  transition: all 0.25s;
+  font-weight: 500;
+  font-size: 1.05rem;
+  border-left: 4px solid transparent;
+}
+
+.sidebar a:hover {
+  background: #d4f0da;
+  border-left-color: #2e8b57;
+  padding-left: 32px;
+  color: #0a4a1a;
+}
+
+.content {
+  margin-top: 90px;
+  padding: 30px 6%;
+  max-width: 1400px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.header h1 {
+  color: #1c6e3c;
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.header p {
+  color: #3c6b4b;
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  font-weight: 400;
+  max-width: 800px;
+}
+
+
+.search-section {
+  margin-bottom: 40px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(8px);
+  padding: 25px 30px;
+  border-radius: 50px;
+  box-shadow: 0 10px 25px rgba(0, 40, 0, 0.1);
+  border: 1px solid rgba(100, 160, 100, 0.3);
+}
+
+.search-wrapper {
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 60px;
+  padding: 5px 5px 5px 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  border: 1px solid #c0e0c0;
+}
+
+.search-wrapper input {
+  flex: 1;
+  padding: 16px 10px;
+  border: none;
+  outline: none;
+  font-size: 1.1rem;
+  background: transparent;
+  color: #1a4a2a;
+}
+
+.search-wrapper input::placeholder {
+  color: #7fa08a;
+}
+
+.search-wrapper button {
+  background: linear-gradient(135deg, #2ecc71, #1e8449);
+  border: none;
+  color: white;
+  padding: 14px 32px;
+  border-radius: 60px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: 0.3s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #b0e0b0;
+}
+
+.search-wrapper button:hover {
+  transform: scale(1.02);
+  box-shadow: 0 8px 18px rgba(30, 130, 30, 0.4);
+  background: linear-gradient(135deg, #3be085, #259b54);
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.chip {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(4px);
+  padding: 8px 20px;
+  border-radius: 40px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #1f5e3a;
+  cursor: pointer;
+  transition: 0.2s;
+  border: 1px solid #a0d0a0;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+}
+
+.chip:hover, .chip.active {
+  background: #1e8449;
+  color: white;
+  border-color: #1e8449;
+  transform: translateY(-2px);
+}
+
+
+.scheme-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 20px;
+}
+
+
+.card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  border-radius: 28px 16px 28px 16px;
+  padding: 28px 24px;
+  transition: all 0.4s;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 15px 30px -8px rgba(0, 60, 0, 0.2);
+  border: 1px solid rgba(150, 210, 150, 0.5);
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 25px 40px -12px #1e5a32;
+  background: rgba(255, 255, 255, 0.98);
+  border-color: #6bb87b;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 100%;
+  background: linear-gradient(180deg, #3ccb7a, #0f7b3a);
+  border-radius: 0 4px 4px 0;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.card-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+  filter: drop-shadow(0 4px 6px rgba(0,80,0,0.2));
+   
+}
+
+.scheme-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #0a542a;
+  line-height: 1.3;
+}
+
+.tag {
+  display: inline-block;
+  background: linear-gradient(145deg, #daf4da, #b8e6b8);
+  color: #0b5e2b;
+  padding: 6px 16px;
+  border-radius: 40px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  margin-bottom: 16px;
+  border: 1px solid #7fbf7f;
+  align-self: flex-start;
+}
+
+.scheme-desc {
+  color: #2d4f38;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  margin-bottom: 22px;
+  flex: 1;
+}
+
+
+.apply-btn {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 40px;
+  background: linear-gradient(135deg, #22c55e, #16a34a);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-weight: 600;
+  font-size: 1rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 6px 14px rgba(30, 130, 30, 0.3);
+  border: 1px solid rgba(255,255,255,0.3);
+  margin-top: 8px;
+}
+
+.apply-btn:hover {
+  transform: scale(1.02);
+  box-shadow: 0 12px 22px rgba(20, 110, 20, 0.4);
+  background: linear-gradient(135deg, #2ed573, #1e8b4c);
+}
+
+.apply-btn i {
+  font-size: 1.1rem;
+}
+
+
+
+.footer {
+  margin-top: 70px;
+  text-align: center;
+  color: #4d705a;
+  font-weight: 500;
+  padding: 30px 0 20px;
+  border-top: 2px solid #bde0c0;
+  background: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(6px);
+  border-radius: 60px 60px 0 0;
+}
+
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #d4ead4;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(145deg, #2d6a42, #1d472a);
+  border-radius: 10px;
+  border: 2px solid #9fcf9f;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(145deg, #3f8b5a, #2b5c38);
+}
+
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.card {
+  animation: slideUp 0.5s ease forwards;
+  opacity: 0;
+}
+.card:nth-child(1) { animation-delay: 0.1s; }
+.card:nth-child(2) { animation-delay: 0.2s; }
+.card:nth-child(3) { animation-delay: 0.3s; }
+.card:nth-child(4) { animation-delay: 0.4s; }
+
+
+@media (max-width: 900px) {
+  .content { padding: 30px 5%; }
+  .header h1 { font-size: 2.2rem; }
+  .search-section { padding: 20px; border-radius: 30px; }
+  .search-wrapper { flex-wrap: wrap; background: transparent; padding: 0; gap: 10px; }
+  .search-wrapper input { background: white; border-radius: 60px; padding: 16px 20px; width: 100%; }
+  .search-wrapper button { width: 100%; justify-content: center; }
+}
+
+@media (max-width: 700px) {
+  .topbar { padding: 0 20px; }
+  .app-name { font-size: 1.3rem; }
+  .menu-btn { font-size: 24px; }
+  .logo-box img { height: 40px; }
+  .header h1 { font-size: 1.9rem; }
+  .header p { font-size: 1rem; }
+  .scheme-grid { gap: 20px; }
+  .card { padding: 22px; }
+  .scheme-title { font-size: 1.3rem; }
+}
+
+@media (max-width: 480px) {
+  .header h1 { font-size: 1.6rem; }
+  .chip { padding: 6px 15px; font-size: 0.85rem; }
+  .card-icon { font-size: 2rem; }
+}
+
+
+a:focus-visible, button:focus-visible {
+  outline: 3px solid #4b9e5a;
+  outline-offset: 3px;
+}
+
+</style>
+</head>
+
+<body>
+
+
+<div class="topbar">
+  <div class="left">
+    <div class="menu-btn" onclick="toggleSidebar()">☰</div>
+    <div class="logo-box">
+      <img src="final logo.png" alt="Sahifasal Logo">
+    </div>
+    <div class="app-name">Sahifasal</div>
+  </div>
+</div>
+
+
+<div class="sidebar" id="sidebar">
+  <a href="dashboard.html"> Dashboard</a>
+  <a href="climate.html"> Climate Intelligence</a>
+  <a href="market.html"> Market Demand</a>
+  <a href="planner.html">Smart Planner</a>
+  <a href="profit.html"> Profit Calculator</a>
+  <a href="fertilizer.html">Risk analysis</a>
+  <a href="govt.html">Govt Schemes</a>
+  <a href="profile.html"> Profile</a>
+  <a href="index.html"> Logout</a>
+</div>
+
+
+<div class="content">
+
+  <div class="header">
+    <h1> Government Support Schemes</h1>
+    <p>Discover subsidies, insurance, and welfare programs tailored for farmers</p>
+  </div>
+
+
+  <div class="search-section">
+    <div class="search-wrapper">
+      <input type="text" placeholder="Search schemes by name or keyword...">
+      <button> Search</button>
+    </div>
+    <div class="filter-chips">
+      <span class="chip active">All</span>
+      <span class="chip">Crop Insurance</span>
+      <span class="chip">Income Support</span>
+      <span class="chip">Soil & Water</span>
+      <span class="chip">Loans & Credit</span>
+      <span class="chip">Equipment Subsidy</span>
+    </div>
+  </div>
+
+  
+  <div class="scheme-grid">
+
+    <a href=" https://pmfby.gov.in/">
+    <div class="card">
+      
+      <div class="card-header">
+        
+        <div class="scheme-title">PM Fasal Bima Yojana</div>
+      </div>
+      <span class="tag">Crop Insurance</span>
+      <div class="scheme-desc">
+        Insurance coverage against crop failure due to natural calamities, pests & diseases. Low premium rates.
+      </div>
+      <button class="apply-btn">View Details →</button>
+    </div>
+</a>
+   
+    <a href="https://pmkisan.gov.in/">
+    <div class="card">
+      <div class="card-header">
+        
+        <div class="scheme-title">PM Kisan Samman Nidhi</div>
+      </div>
+      <span class="tag">Income Support</span>
+      <div class="scheme-desc">
+        Direct cash transfer of ₹6000 per year to eligible farmers in three installments.
+      </div>
+      <button class="apply-btn">Apply Now →</button>
+    </div>
+     </a>
+    
+     <a href="https://agrimachinery.nic.in/">
+    <div class="card">
+      <div class="card-header">
+       
+        <div class="scheme-title">Sub-Mission on Agricultural Mechanization</div>
+      </div>
+      <span class="tag">Equipment Subsidy</span>
+      <div class="scheme-desc">
+       (Central portal for subsidies on agricultural machinery and drones).
+      </div>
+      <button class="apply-btn">Check Eligibility →</button>
+    </div>
+    </a>
+
+   <a href="https://agriinfra.dac.gov.in/">
+    <div class="card">
+      <div class="card-header">
+        
+        <div class="scheme-title">Agriculture Infrastructure Fund </div>
+      </div>
+      <span class="tag">Agriculture Loan</span>
+      <div class="scheme-desc">
+      Financing facility for post-harvest infrastructure.
+      </div>
+      <button class="apply-btn">Apply Now →</button>
+    </div>
+    </a>
+
+
+   <a href=" https://pmksy.gov.in/">
+    <div class="card">
+      <div class="card-header">
+        
+        <div class="scheme-title">PM Krishi Sinchai Yojana</div>
+      </div>
+      <span class="tag">Water Resources</span>
+      <div class="scheme-desc">
+        Funding for micro-irrigation, watershed development, and "more crop per drop".
+      </div>
+      <button class="apply-btn">Learn More →</button>
+    </div>
+    </a>
+
+   <a href=" https://kisansuvidha.gov.in/">
+    <div class="card">
+      <div class="card-header">
+        
+        <div class="scheme-title">4. All-in-One Farmer Advisory Portals
+Kisan Suvidha:</div>
+      </div>
+      <span class="tag">Infrastructure</span>
+      <div class="scheme-desc">
+        A massive government portal combining PM-Kisan, weather, market prices, and plant diseases.
+      </div>
+      
+      <button class="apply-btn">View Scheme →</button>
+    </div>
+    </a>
+
+  </div>
+
+  <div class="footer">
+    © 2026 Sahifasal — Farmer Welfare & Government Support
+  </div>
+
+</div>
+
+<script>
+function toggleSidebar() {
+  document.getElementById("sidebar").classList.toggle("active");
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,736 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>KrishiBot — Smart Crop Advisor</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --sidebar-w: 270px;
+  --sidebar-bg: #0a1f10;
+  --chat-bg: #f4f9f4;
+  --accent: #22c55e;
+  --g1: #0D2818;
+  --g2: #14522e;
+  --text: #111;
+  --text-muted: #6b7280;
+  --border: rgba(34,197,94,0.15);
+  --font: 'Plus Jakarta Sans', sans-serif;
+}
+html,body { height:100%; font-family:var(--font); overflow:hidden; background:var(--sidebar-bg); color:var(--text); }
+
+.app { display:flex; height:100dvh; height:100vh; }
+
+.sidebar {
+  width:var(--sidebar-w); background:var(--sidebar-bg);
+  display:flex; flex-direction:column;
+  border-right:1px solid rgba(255,255,255,0.05);
+  flex-shrink:0; transition:transform .3s cubic-bezier(.4,0,.2,1);
+  z-index:20;
+}
+.welcome-icon img { height: 200px; }
+
+.sidebar-logo {
+  padding:20px 16px 16px; display:flex; align-items:center; gap:12px;
+  border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.logo-icon {
+  width:38px; height:38px; background:linear-gradient(135deg,#22c55e,#15803d);
+  border-radius:10px; display:flex; align-items:center; justify-content:center;
+  font-size:20px; box-shadow:0 4px 14px rgba(34,197,94,.4); flex-shrink:0;
+}
+.logo-text h2 { font-size:16px; font-weight:800; color:#fff; letter-spacing:-.4px; }
+.logo-text p { font-size:10px; color:rgba(255,255,255,.35); margin-top:2px; }
+.new-chat-btn {
+  margin:14px 14px 8px; background:rgba(34,197,94,.1);
+  border:1px solid rgba(34,197,94,.25); color:#22c55e;
+  border-radius:10px; padding:10px 14px; font-family:var(--font);
+  font-size:13px; font-weight:600; cursor:pointer;
+  display:flex; align-items:center; gap:8px; transition:all .2s;
+}
+.new-chat-btn:hover { background:rgba(34,197,94,.2); }
+.new-chat-btn svg { width:16px; height:16px; fill:#22c55e; }
+.sidebar-section { padding:12px 16px 6px; font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:rgba(255,255,255,.25); }
+.chat-history { flex:1; overflow-y:auto; padding:0 10px; }
+.chat-history::-webkit-scrollbar { width:3px; }
+.chat-history::-webkit-scrollbar-thumb { background:rgba(255,255,255,.08); border-radius:3px; }
+.history-item {
+  display:flex; align-items:center; gap:9px; padding:8px 10px; border-radius:9px;
+  cursor:pointer; color:rgba(255,255,255,.5); font-size:13px; transition:all .15s;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+}
+.history-item:hover,.history-item.active { background:rgba(255,255,255,.07); color:rgba(255,255,255,.9); }
+.history-item svg { width:14px; height:14px; fill:currentColor; opacity:.5; flex-shrink:0; }
+.sidebar-footer { border-top:1px solid rgba(255,255,255,.06); padding:14px; }
+.lang-selector { display:flex; gap:6px; margin-bottom:12px; }
+.lang-pill {
+  flex:1; padding:7px 4px; background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.1); border-radius:8px;
+  color:rgba(255,255,255,.45); font-size:11px; font-weight:600;
+  text-align:center; cursor:pointer; transition:all .2s; font-family:var(--font);
+}
+.lang-pill.active,.lang-pill:hover { background:rgba(34,197,94,.18); border-color:rgba(34,197,94,.35); color:#22c55e; }
+.farmer-badge {
+  display:flex; align-items:center; gap:10px; padding:10px;
+  background:rgba(255,255,255,.04); border-radius:10px;
+}
+.farmer-avatar {
+  width:34px; height:34px; background:linear-gradient(135deg,#16a34a,#14532d);
+  border-radius:50%; display:flex; align-items:center; justify-content:center;
+  font-size:17px; flex-shrink:0;
+}
+.farmer-info p { font-size:13px; font-weight:600; color:#fff; }
+.farmer-info span { font-size:11px; color:rgba(255,255,255,.35); }
+
+.main { flex:1; display:flex; flex-direction:column; background:var(--chat-bg); min-width:0; }
+
+.mobile-header {
+  display:none; align-items:center; gap:12px; padding:12px 16px;
+  background:#fff; border-bottom:1px solid var(--border);
+  position:sticky; top:0; z-index:10;
+}
+.hamburger {
+  width:36px; height:36px; background:#f0f7f0; border:none;
+  border-radius:9px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+}
+.hamburger svg { width:18px; height:18px; fill:var(--g2); }
+.mobile-logo { display:flex; align-items:center; gap:8px; }
+.mobile-logo .logo-icon { width:30px; height:30px; font-size:16px; border-radius:8px; }
+.mobile-logo span { font-size:15px; font-weight:800; color:var(--g1); }
+
+.messages-wrap { flex:1; overflow-y:auto; scroll-behavior:smooth; }
+.messages-wrap::-webkit-scrollbar { width:5px; }
+.messages-wrap::-webkit-scrollbar-thumb { background:rgba(0,0,0,.1); border-radius:5px; }
+.messages-inner { max-width:760px; margin:0 auto; padding:32px 24px 0; }
+
+.welcome-screen { text-align:center; padding:48px 24px 32px; }
+.welcome-icon {
+  width:70px; height:70px;
+  border-radius:22px; margin:0 auto 20px; display:flex; align-items:center; justify-content:center;
+  font-size:34px; box-shadow:0 12px 36px rgba(34,197,94,.35);
+  animation:float 3s ease-in-out infinite;
+}
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+.welcome-screen h1 { font-size:28px; font-weight:800; color:var(--g1); letter-spacing:-.6px; margin-bottom:8px; }
+.welcome-screen p { font-size:15px; color:var(--text-muted); max-width:380px; margin:0 auto 32px; line-height:1.6; }
+.suggestion-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; max-width:560px; margin:0 auto; }
+.suggestion-card {
+  background:#fff; border:1px solid var(--border); border-radius:14px;
+  padding:14px 16px; text-align:left; cursor:pointer;
+  transition:all .22s cubic-bezier(.4,0,.2,1); display:flex; flex-direction:column; gap:5px;
+}
+.suggestion-card:hover { border-color:var(--accent); box-shadow:0 4px 20px rgba(34,197,94,.15); transform:translateY(-2px); }
+.sc-icon { font-size:22px; }
+.sc-title { font-size:13px; font-weight:700; color:var(--g1); }
+.sc-sub { font-size:11px; color:var(--text-muted); line-height:1.4; }
+
+.msg-group { margin-bottom:24px; animation:msgIn .35s cubic-bezier(.34,1.56,.64,1) both; }
+@keyframes msgIn { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:none} }
+.msg-row { display:flex; gap:13px; align-items:flex-start; }
+.msg-row.user { flex-direction:row-reverse; }
+.avatar {
+  width:36px; height:36px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; font-size:18px; margin-top:2px;
+}
+.avatar.bot { background:linear-gradient(135deg,#22c55e,#16a34a); box-shadow:0 4px 10px rgba(34,197,94,.3); }
+.avatar.user { background:linear-gradient(135deg,#166534,#14532d); color:#fff; font-size:13px; font-weight:700; }
+.msg-content { flex:1; min-width:0; }
+.msg-name { font-size:11.5px; font-weight:700; color:var(--text-muted); margin-bottom:5px; letter-spacing:.2px; }
+.msg-row.user .msg-name { text-align:right; }
+.bubble {
+  display:inline-block; max-width:100%;
+  padding:13px 17px; border-radius:18px;
+  font-size:14.5px; line-height:1.65; word-wrap:break-word;
+}
+.bot .bubble {
+  background:#fff; color:var(--text); border-radius:4px 18px 18px 18px;
+  box-shadow:0 2px 10px rgba(0,0,0,.06); border:1px solid rgba(0,0,0,.05); max-width:88%;
+}
+.user .bubble {
+  background:linear-gradient(135deg,#16a34a,#15803d); color:#fff;
+  border-radius:18px 4px 18px 18px; margin-left:auto; max-width:75%;
+}
+
+/* Error bubble */
+.error-bubble {
+  background:#fff5f5; border:1px solid #fecaca; color:#b91c1c;
+  border-radius:4px 18px 18px 18px;
+  box-shadow:0 2px 10px rgba(0,0,0,.06); max-width:88%;
+  padding:13px 17px; font-size:14px; line-height:1.65;
+  display:inline-block;
+}
+.error-bubble strong { display:block; margin-bottom:4px; font-size:13px; }
+
+.card-wrap { margin-top:12px; display:flex; flex-direction:column; gap:10px; }
+.crop-rec-card {
+  background:linear-gradient(135deg,#f0fdf4,#dcfce7); border:1px solid #bbf7d0;
+  border-radius:14px; padding:14px 16px; display:flex; flex-direction:column; gap:9px;
+}
+.card-header { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px; color:#15803d; display:flex; align-items:center; gap:6px; margin-bottom:2px; }
+.crop-item {
+  display:flex; align-items:center; gap:10px; padding:10px 12px;
+  background:#fff; border-radius:10px; box-shadow:0 1px 4px rgba(0,0,0,.05);
+}
+.crop-emoji { font-size:26px; flex-shrink:0; }
+.crop-details { flex:1; min-width:0; }
+.crop-name-row { display:flex; align-items:center; justify-content:space-between; gap:6px; flex-wrap:wrap; }
+.crop-title { font-size:14px; font-weight:700; color:var(--g1); }
+.badges { display:flex; gap:5px; flex-wrap:wrap; }
+.badge { font-size:10px; font-weight:700; padding:3px 9px; border-radius:20px; }
+.profit-high{background:#dcfce7;color:#16a34a} .profit-med{background:#fef9c3;color:#a16207} .profit-low{background:#fee2e2;color:#dc2626}
+.risk-low{background:#dcfce7;color:#166534} .risk-med{background:#fef3c7;color:#92400e} .risk-high{background:#fee2e2;color:#991b1b}
+.conf-bar { height:3px; background:#e5e7eb; border-radius:3px; overflow:hidden; margin-top:6px; }
+.conf-fill { height:100%; background:linear-gradient(90deg,#22c55e,#86efac); border-radius:3px; }
+.conf-label { font-size:10px; color:#9ca3af; margin-top:3px; }
+
+.profit-card {
+  background:linear-gradient(135deg,#fffbeb,#fef3c7); border:1px solid #fde68a; border-radius:14px; padding:16px;
+}
+.profit-card .card-header { color:#b45309; margin-bottom:12px; }
+.profit-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+.profit-tile { background:#fff; border-radius:10px; padding:10px; text-align:center; box-shadow:0 1px 4px rgba(0,0,0,.05); }
+.profit-tile .val { font-size:15px; font-weight:800; color:#92400e; }
+.profit-tile .lbl { font-size:10px; color:#9ca3af; margin-top:3px; }
+.roi-row { margin-top:12px; display:flex; align-items:center; gap:10px; font-size:12px; color:#6b7280; }
+.roi-bar { flex:1; height:6px; background:#e5e7eb; border-radius:6px; overflow:hidden; }
+.roi-fill { height:100%; background:linear-gradient(90deg,#f59e0b,#22c55e); border-radius:6px; }
+
+.alert-card {
+  background:#fffbeb; border:1px solid #fcd34d; border-left:4px solid #f59e0b;
+  border-radius:12px; padding:14px 16px; font-size:13.5px; line-height:1.6; color:#78350f;
+}
+.alert-title { font-weight:700; font-size:13px; color:#b45309; margin-bottom:6px; display:flex; align-items:center; gap:6px; }
+
+.scheme-card {
+  background:linear-gradient(135deg,#eff6ff,#dbeafe); border:1px solid #bfdbfe; border-radius:14px; padding:14px 16px;
+}
+.scheme-card .card-header { color:#1d4ed8; margin-bottom:10px; }
+.scheme-item {
+  display:flex; gap:10px; padding:9px 10px; background:#fff; border-radius:9px;
+  margin-bottom:7px; box-shadow:0 1px 4px rgba(0,0,0,.05); align-items:center;
+}
+.scheme-item:last-child { margin-bottom:0; }
+.scheme-item .s-icon { font-size:20px; flex-shrink:0; }
+.scheme-item p { font-size:13px; font-weight:700; color:#1e3a8a; }
+.scheme-item span { font-size:11px; color:#6b7280; }
+
+.typing-bubble {
+  background:#fff; border:1px solid rgba(0,0,0,.05); box-shadow:0 2px 10px rgba(0,0,0,.06);
+  border-radius:4px 18px 18px 18px; padding:14px 18px; display:inline-flex; gap:5px; align-items:center;
+}
+.typing-bubble span { width:7px; height:7px; background:var(--accent); border-radius:50%; animation:typePop 1.2s ease-in-out infinite; }
+.typing-bubble span:nth-child(2){animation-delay:.2s} .typing-bubble span:nth-child(3){animation-delay:.4s}
+@keyframes typePop { 0%,60%,100%{transform:scale(1);opacity:.5} 30%{transform:scale(1.4);opacity:1} }
+
+.input-area {
+  background:#fff; border-top:1px solid var(--border);
+  padding:16px 24px 20px;
+  padding-bottom:max(20px,env(safe-area-inset-bottom));
+}
+.input-area-inner { max-width:760px; margin:0 auto; }
+.quick-chips { display:flex; gap:8px; overflow-x:auto; padding-bottom:12px; scrollbar-width:none; }
+.quick-chips::-webkit-scrollbar{display:none}
+.qchip {
+  flex-shrink:0; background:#f0fdf4; border:1px solid #bbf7d0; color:#16a34a;
+  border-radius:20px; padding:6px 14px; font-size:12px; font-weight:600;
+  cursor:pointer; transition:all .18s; font-family:var(--font); white-space:nowrap;
+}
+.qchip:hover { background:#16a34a; color:#fff; border-color:#16a34a; }
+.input-box {
+  display:flex; align-items:flex-end; gap:10px;
+  background:#408440; border:1.5px solid #d1fae5; border-radius:18px;
+  padding:10px 10px 10px 18px; transition:border-color .2s,box-shadow .2s;
+}
+.input-box:focus-within { border-color:var(--accent); box-shadow:0 0 0 3px rgba(34,197,94,.12); background:#fff; }
+#chat-input {
+  flex:1; border:none; background:transparent; font-family:var(--font);
+  font-size:15px; color:var(--text); outline:none; resize:none; max-height:140px; line-height:1.5;
+}
+#chat-input::placeholder{color:#9ca3af}
+.send-btn {
+  width:42px; height:42px; background:linear-gradient(135deg,#22c55e,#16a34a);
+  border:none; border-radius:12px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 14px rgba(34,197,94,.35); transition:all .2s; flex-shrink:0;
+}
+.send-btn:hover { transform:scale(1.07); box-shadow:0 6px 20px rgba(34,197,94,.5); }
+.send-btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+.send-btn svg { width:20px; height:20px; fill:#fff; }
+.input-footer { text-align:center; margin-top:8px; font-size:11px; color:#9ca3af; }
+
+.overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:15; backdrop-filter:blur(2px); }
+
+/* Status indicator */
+.status-bar {
+  display:none; align-items:center; gap:6px; padding:6px 14px;
+  background:#fef3c7; border-bottom:1px solid #fde68a;
+  font-size:12px; color:#92400e; font-weight:600;
+}
+.status-bar.error { background:#fee2e2; border-color:#fecaca; color:#b91c1c; display:flex; }
+.status-dot { width:7px; height:7px; border-radius:50%; background:currentColor; }
+
+@media(max-width:768px){
+  .sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-100%);}
+  .sidebar.open{transform:translateX(0);}
+  .overlay.show{display:block;}
+  .mobile-header{display:flex;}
+  .messages-inner{padding:20px 16px 0;}
+  .input-area{padding:12px 16px 20px;}
+  .suggestion-grid{grid-template-columns:1fr;}
+  .welcome-screen h1{font-size:22px;}
+  .profit-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-icon">🌱</div>
+    <div class="logo-text"><h2>KrishiBot</h2><p>Smart Crop Advisor AI</p></div>
+  </div>
+  <button class="new-chat-btn" onclick="newChat()">
+    <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+    New Conversation
+  </button>
+  <div class="sidebar-section">Recent Chats</div>
+  <div class="chat-history">
+    <div class="history-item active"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>Soybean vs Cotton — Kharif</div>
+    <div class="history-item"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>Mandi prices Nagpur</div>
+    <div class="history-item"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>Drought risk — Vidarbha</div>
+    <div class="history-item"><svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>PM-Kisan eligibility</div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="lang-selector">
+      <button class="lang-pill active" onclick="setLang('en',this)">English</button>
+      <button class="lang-pill" onclick="setLang('hi',this)">हिन्दी</button>
+      <button class="lang-pill" onclick="setLang('mr',this)">मराठी</button>
+    </div>
+    <div class="farmer-badge">
+      <div class="farmer-avatar">👨‍🌾</div>
+      <div class="farmer-info"><p>Shivaji Patil</p><span>Farmer · Maharashtra</span></div>
+    </div>
+  </div>
+</aside>
+
+<div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+
+<main class="main">
+  <!-- Status bar for connection errors -->
+  <div class="status-bar" id="statusBar">
+    <div class="status-dot"></div>
+    <span id="statusMsg">Server not reachable</span>
+  </div>
+
+  <div class="mobile-header">
+    <button class="hamburger" onclick="toggleSidebar()">
+      <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+    </button>
+    <div class="mobile-logo">
+      <div class="logo-icon">🌱</div>
+      <span>KrishiBot</span>
+    </div>
+  </div>
+
+  <div class="messages-wrap" id="messagesWrap">
+    <div class="messages-inner" id="messagesInner">
+      <div class="welcome-screen" id="welcomeScreen">
+        <div class="welcome-icon">
+          <img src="final logo.png" alt="KrishiBot" onerror="this.parentElement.innerHTML='🌾'">
+        </div>
+        <h1>How can I help you today?</h1>
+        <p>I'm KrishiBot, your AI-powered Smart Crop Advisor. Ask me about crops, weather, mandi prices, profit estimates, and government schemes.</p>
+        <div class="suggestion-grid">
+          <div class="suggestion-card" onclick="sendQuick('Recommend the best 3 crops for kharif season in Vidarbha, Maharashtra')">
+            <div class="sc-icon"></div><div class="sc-title">Crop Recommendations</div>
+            <div class="sc-sub">Best crops for this season based on soil & climate</div>
+          </div>
+          <div class="suggestion-card" onclick="sendQuick('Today mandi prices for soybean, cotton and onion in Maharashtra')">
+            <div class="sc-icon"></div><div class="sc-title">Mandi Prices</div>
+            <div class="sc-sub">Today's local & global market prices</div>
+          </div>
+          <div class="suggestion-card" onclick="sendQuick('Calculate profit if I grow soybean on 2 acres — what is the investment and income?')">
+            <div class="sc-icon"></div><div class="sc-title">Profit Calculator</div>
+            <div class="sc-sub">Estimate investment, yield & net profit</div>
+          </div>
+          <div class="suggestion-card" onclick="sendQuick('What government schemes and subsidies are available for Maharashtra farmers?')">
+            <div class="sc-icon"></div><div class="sc-title">Government Schemes</div>
+            <div class="sc-sub">PM-Kisan, PMFBY, MSP & subsidies</div>
+          </div>
+          <div class="suggestion-card" onclick="sendQuick('Rainfall forecast and climate risk for Vidarbha next 2 weeks')">
+            <div class="sc-icon"></div><div class="sc-title">Weather & Climate</div>
+            <div class="sc-sub">Forecast, monsoon alerts & risk indicators</div>
+          </div>
+          <div class="suggestion-card" onclick="sendQuick('What are the main risk alerts farmers should know this season?')">
+            <div class="sc-icon"></div><div class="sc-title">Risk Alerts</div>
+            <div class="sc-sub">Drought, flood, pest & price-crash warnings</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="input-area">
+    <div class="input-area-inner">
+      <div class="quick-chips">
+        <span class="qchip" onclick="sendQuick('Best crop for kharif season now')">🌱 Best crop now</span>
+        <span class="qchip" onclick="sendQuick('Soybean mandi price today')">📈 Soybean price</span>
+        <span class="qchip" onclick="sendQuick('Rainfall forecast this week')">🌧️ Rainfall</span>
+        <span class="qchip" onclick="sendQuick('Profit estimate for cotton on 3 acres')">💰 Profit estimate</span>
+        <span class="qchip" onclick="sendQuick('PM-Kisan and crop insurance eligibility')">🛡️ Govt schemes</span>
+        <span class="qchip" onclick="sendQuick('Crop calendar — when to sow soybean?')">📅 Crop calendar</span>
+      </div>
+      <div class="input-box">
+        <textarea id="chat-input" rows="1"
+          placeholder="Ask about crops, weather, mandi prices, profit…"
+          onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+        <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+          <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+      </div>
+      <div class="input-footer">KrishiBot may make mistakes. Verify critical decisions with local agricultural experts.</div>
+    </div>
+  </div>
+</main>
+</div>
+
+<script>
+let currentLang = 'en';
+let isTyping = false;
+let hasStartedChat = false;
+let messageHistory = [];
+
+// ── LANGUAGE ──
+function setLang(lang, btn) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-pill').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const pl = {
+    en: 'Ask about crops, weather, mandi prices, profit…',
+    hi: 'फसल, मौसम, मंडी भाव के बारे में पूछें…',
+    mr: 'पीक, हवामान, मंडी भावाबद्दल विचारा…'
+  };
+  document.getElementById('chat-input').placeholder = pl[lang];
+}
+
+// ── SIDEBAR ──
+function toggleSidebar() {
+  document.getElementById('sidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+}
+function closeSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+
+// ── NEW CHAT ──
+function newChat() {
+  const inner = document.getElementById('messagesInner');
+  inner.innerHTML = '';
+  const ws = document.createElement('div');
+  ws.id = 'welcomeScreen';
+  ws.className = 'welcome-screen';
+  ws.innerHTML = `
+    <div class="welcome-icon">🌾</div>
+    <h1>How can I help you today?</h1>
+    <p>I'm KrishiBot, your AI-powered Smart Crop Advisor. Ask me about crops, weather, mandi prices, profit estimates, and government schemes.</p>
+    <div class="suggestion-grid">
+      <div class="suggestion-card" onclick="sendQuick('Recommend best 3 crops for kharif season in Vidarbha')"><div class="sc-icon">🌾</div><div class="sc-title">Crop Recommendations</div><div class="sc-sub">Best crops for this season based on soil & climate</div></div>
+      <div class="suggestion-card" onclick="sendQuick('Today mandi prices for soybean, cotton and onion')"><div class="sc-icon">📊</div><div class="sc-title">Mandi Prices</div><div class="sc-sub">Today's local & global market prices</div></div>
+      <div class="suggestion-card" onclick="sendQuick('Calculate profit for soybean on 2 acres')"><div class="sc-icon">💰</div><div class="sc-title">Profit Calculator</div><div class="sc-sub">Estimate investment, yield & net profit</div></div>
+      <div class="suggestion-card" onclick="sendQuick('Government schemes for Maharashtra farmers')"><div class="sc-icon">🏛️</div><div class="sc-title">Government Schemes</div><div class="sc-sub">PM-Kisan, PMFBY, MSP & subsidies</div></div>
+    </div>`;
+  inner.appendChild(ws);
+  messageHistory = [];
+  hasStartedChat = false;
+  hideStatusBar();
+  closeSidebar();
+}
+
+// ── STATUS BAR ──
+function showStatusBar(msg) {
+  const bar = document.getElementById('statusBar');
+  document.getElementById('statusMsg').textContent = msg;
+  bar.classList.add('error');
+}
+function hideStatusBar() {
+  document.getElementById('statusBar').classList.remove('error');
+}
+
+// ── INPUT HELPERS ──
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 140) + 'px';
+}
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+function sendQuick(text) {
+  document.getElementById('chat-input').value = text;
+  sendMessage();
+}
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function scrollBottom() {
+  const w = document.getElementById('messagesWrap');
+  w.scrollTop = w.scrollHeight;
+}
+
+// ── USER MESSAGE ──
+function addUserMsg(text) {
+  if (!hasStartedChat) {
+    const ws = document.getElementById('welcomeScreen');
+    if (ws) ws.remove();
+    hasStartedChat = true;
+  }
+  const inner = document.getElementById('messagesInner');
+  const g = document.createElement('div');
+  g.className = 'msg-group';
+  g.innerHTML = `<div class="msg-row user">
+    <div class="avatar user">You</div>
+    <div class="msg-content">
+      <div class="msg-name">You</div>
+      <div class="bubble">${esc(text)}</div>
+    </div>
+  </div>`;
+  inner.appendChild(g);
+  scrollBottom();
+}
+
+// ── TYPING INDICATOR ──
+function showTyping() {
+  const inner = document.getElementById('messagesInner');
+  const g = document.createElement('div');
+  g.id = 'typingRow'; g.className = 'msg-group';
+  g.innerHTML = `<div class="msg-row bot">
+    <div class="avatar bot">🌱</div>
+    <div class="msg-content">
+      <div class="msg-name">KrishiBot</div>
+      <div class="typing-bubble"><span></span><span></span><span></span></div>
+    </div>
+  </div>`;
+  inner.appendChild(g);
+  scrollBottom();
+}
+function hideTyping() {
+  const t = document.getElementById('typingRow');
+  if (t) t.remove();
+}
+
+// ── CARD PARSERS ──
+function parseCrops(str) {
+  const parts = str.split('|');
+  const emojis = {soybean:'🌿',cotton:'☁️',maize:'🌽',wheat:'🌾',onion:'🧅',tomato:'🍅',rice:'🍚',sugarcane:'🎋',tur:'🫘',gram:'🟤',sunflower:'🌻'};
+  function emoji(n){ n=n.toLowerCase(); for(const k in emojis) if(n.includes(k)) return emojis[k]; return '🌾'; }
+  let html = `<div class="crop-rec-card"><div class="card-header">🌾 AI Crop Recommendations</div>`;
+  for(let i=0;i<parts.length;i+=4){
+    const [name,profit,risk,conf] = [parts[i],parts[i+1],parts[i+2],parseInt(parts[i+3])||70];
+    if(!name) continue;
+    const pc = profit?.toLowerCase()==='high'?'profit-high':profit?.toLowerCase()==='medium'?'profit-med':'profit-low';
+    const rc = risk?.toLowerCase()==='low'?'risk-low':risk?.toLowerCase()==='medium'?'risk-med':'risk-high';
+    html += `<div class="crop-item">
+      <div class="crop-emoji">${emoji(name)}</div>
+      <div class="crop-details">
+        <div class="crop-name-row">
+          <span class="crop-title">${esc(name)}</span>
+          <div class="badges"><span class="badge ${pc}">Profit: ${esc(profit||'')}</span><span class="badge ${rc}">Risk: ${esc(risk||'')}</span></div>
+        </div>
+        <div class="conf-bar"><div class="conf-fill" style="width:${conf}%"></div></div>
+        <div class="conf-label">AI Confidence: ${conf}%</div>
+      </div>
+    </div>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
+function parseProfit(str) {
+  const [inv,minI,maxI] = str.split('|').map(Number);
+  const netMin = minI-inv, netMax = maxI-inv;
+  const roi = Math.round((netMin/inv)*100);
+  return `<div class="profit-card">
+    <div class="card-header">💰 Profit & Investment Estimate</div>
+    <div class="profit-grid">
+      <div class="profit-tile"><div class="val">₹${inv.toLocaleString('en-IN')}</div><div class="lbl">Investment</div></div>
+      <div class="profit-tile"><div class="val">₹${minI.toLocaleString('en-IN')}–${maxI.toLocaleString('en-IN')}</div><div class="lbl">Expected Income</div></div>
+      <div class="profit-tile"><div class="val" style="color:#16a34a">₹${netMin.toLocaleString('en-IN')}+</div><div class="lbl">Net Profit</div></div>
+    </div>
+    <div class="roi-row"><span>ROI ~${roi}%</span><div class="roi-bar"><div class="roi-fill" style="width:${Math.min(100,roi)}%"></div></div></div>
+  </div>`;
+}
+
+function parseSchemes(str) {
+  const parts = str.split('|');
+  const icons = {'PM-Kisan':'🌾','PMFBY':'🛡️','Fasal':'🛡️','Soil':'🧪','MSP':'💹','Kisan Credit':'💳','default':'🏛️'};
+  function icon(n){ for(const k in icons) if(n.includes(k)) return icons[k]; return icons.default; }
+  let html = `<div class="scheme-card"><div class="card-header">🏛️ Government Schemes</div>`;
+  for(let i=0;i<parts.length;i+=2){
+    if(!parts[i]) continue;
+    html += `<div class="scheme-item"><div class="s-icon">${icon(parts[i])}</div><div><p>${esc(parts[i])}</p><span>${esc(parts[i+1]||'')}</span></div></div>`;
+  }
+  html += `</div>`;
+  return html;
+}
+
+function buildBotHtml(raw) {
+  let text = raw;
+  let cropHtml='', profitHtml='', alertHtml='', schemeHtml='';
+
+  const cc = text.match(/CROP_CARD:([^\n]+)/);
+  if(cc){ cropHtml=`<div class="card-wrap">${parseCrops(cc[1].trim())}</div>`; text=text.replace(/CROP_CARD:[^\n]+\n?/,''); }
+
+  const pd = text.match(/PROFIT_DATA:([^\n]+)/);
+  if(pd){ profitHtml=`<div class="card-wrap">${parseProfit(pd[1].trim())}</div>`; text=text.replace(/PROFIT_DATA:[^\n]+\n?/,''); }
+
+  const ra = text.match(/RISK_ALERT:([\s\S]+?)(?=\nCROP_CARD:|\nPROFIT_DATA:|\nSCHEME_DATA:|$)/);
+  if(ra){ alertHtml=`<div class="card-wrap"><div class="alert-card"><div class="alert-title">⚠️ Risk Alert</div>${esc(ra[1].trim()).replace(/\n/g,'<br>')}</div></div>`; text=text.replace(/RISK_ALERT:[\s\S]+?(?=\nCROP_CARD:|\nPROFIT_DATA:|\nSCHEME_DATA:|$)/,''); }
+
+  const sd = text.match(/SCHEME_DATA:([^\n]+)/);
+  if(sd){ schemeHtml=`<div class="card-wrap">${parseSchemes(sd[1].trim())}</div>`; text=text.replace(/SCHEME_DATA:[^\n]+\n?/,''); }
+
+  text = text.trim();
+
+  return `<div class="msg-row bot">
+    <div class="avatar bot">🌱</div>
+    <div class="msg-content">
+      <div class="msg-name">KrishiBot</div>
+      ${text ? `<div class="bubble">${text.replace(/\n/g,'<br>')}</div>` : ''}
+      ${cropHtml}${profitHtml}${alertHtml}${schemeHtml}
+    </div>
+  </div>`;
+}
+
+function buildErrorHtml(message) {
+  return `<div class="msg-row bot">
+    <div class="avatar bot">🌱</div>
+    <div class="msg-content">
+      <div class="msg-name">KrishiBot</div>
+      <div class="error-bubble">
+        <strong>⚠️ Something went wrong</strong>
+        ${esc(message)}
+      </div>
+    </div>
+  </div>`;
+}
+
+// ── SEND MESSAGE ──
+async function sendMessage() {
+  if (isTyping) return;
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+  isTyping = true;
+  document.getElementById('sendBtn').disabled = true;
+  hideStatusBar();
+
+  addUserMsg(text);
+  messageHistory.push({ role: 'user', content: text });
+  showTyping();
+
+  const sysLang = currentLang === 'hi' ? 'Hindi' : currentLang === 'mr' ? 'Marathi' : 'English';
+  const systemPrompt = `You are KrishiBot, the AI assistant for the Smart Crop Decision Support System for Indian farmers in Maharashtra/Vidarbha.
+
+Expertise areas:
+1. CROP RECOMMENDATIONS — Top 3 crops based on season/soil/climate (Kharif season: soybean, cotton, tur dal, maize, sunflower are common)
+2. MANDI PRICES — Soybean ₹4200-4800/q, Cotton ₹6500-7500/q, Wheat ₹2015/q MSP, Onion ₹800-2000/q, Tur ₹6000-7000/q
+3. WEATHER & CLIMATE — Rainfall forecasts, monsoon timings, temperature trends for Maharashtra
+4. PROFIT CALCULATOR — Cost (seeds+fertilizer+labor) and income estimates in INR
+5. RISK ALERTS — Drought, flood, pest, price-crash with actionable guidance
+6. GOVERNMENT SCHEMES — PM-Kisan ₹6000/yr, PMFBY crop insurance, Soil Health Card, Kisan Credit Card, MSP
+7. CROP CALENDAR — Sowing windows, irrigation, fertilizer schedule, harvest
+
+RESPONSE FORMAT:
+- Write 2-4 warm, practical sentences as main text FIRST
+- Then append appropriate DATA TOKENS (no markdown fences):
+
+For crop recommendations:
+CROP_CARD:CropName|High/Medium/Low|Low/Medium/High|confidence_int|CropName2|...|CropName3|...
+
+For profit/investment:
+PROFIT_DATA:investment_int|min_income_int|max_income_int
+
+For risk/weather:
+RISK_ALERT:concise alert text (max 60 words)
+
+For govt schemes:
+SCHEME_DATA:SchemeName1|short description|SchemeName2|short description|SchemeName3|short description
+
+Rules: Be warm & farmer-friendly. Never say you are Claude or from Anthropic. Respond in ${sysLang}.`;
+
+  try {
+    const res = await fetch('http://127.0.0.1:3000/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'llama-3.3-70b-versatile',
+        max_tokens: 1000,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          ...messageHistory
+        ]
+      })
+    });
+
+    const data = await res.json();
+
+    hideTyping();
+
+    // Handle API-level errors returned from server
+    if (!res.ok || data.error) {
+      const errMsg = data.error || 'API error. Please check your API key and try again.';
+      showStatusBar(errMsg);
+      appendBotGroup(buildErrorHtml(errMsg));
+      // Remove failed user message from history
+      messageHistory.pop();
+      return;
+    }
+
+    // Validate response structure
+    const raw = data.choices?.[0]?.message?.content;
+    if (!raw) {
+      const errMsg = 'Received empty response from AI. Please try again.';
+      appendBotGroup(buildErrorHtml(errMsg));
+      messageHistory.pop();
+      return;
+    }
+
+    messageHistory.push({ role: 'assistant', content: raw });
+    appendBotGroup(buildBotHtml(raw));
+
+  } catch (err) {
+    hideTyping();
+    let errMsg = '';
+    if (err instanceof TypeError && err.message.includes('fetch')) {
+      errMsg = 'Cannot connect to server. Make sure you ran: node server.js';
+    } else {
+      errMsg = 'Unexpected error: ' + err.message;
+    }
+    showStatusBar(errMsg);
+    appendBotGroup(buildErrorHtml(errMsg));
+    // Remove failed user message from history so user can retry
+    messageHistory.pop();
+    console.error('KrishiBot error:', err);
+  } finally {
+    isTyping = false;
+    document.getElementById('sendBtn').disabled = false;
+  }
+}
+
+function appendBotGroup(html) {
+  const inner = document.getElementById('messagesInner');
+  const g = document.createElement('div');
+  g.className = 'msg-group';
+  g.innerHTML = html;
+  inner.appendChild(g);
+  scrollBottom();
+}
+</script>
+</body>
+</html>
